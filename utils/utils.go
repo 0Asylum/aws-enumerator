@@ -110,11 +110,14 @@ func ToLowerServices(a []string) (services_lowercase []string) {
 }
 
 func CheckEnvFileExistance() bool {
+	// If standard AWS credentials are already exported, no .env file is needed.
+	if os.Getenv("AWS_ACCESS_KEY_ID") != "" {
+		return true
+	}
 	if _, err := os.Stat(".env"); err != nil {
 		if os.IsNotExist(err) {
 			fmt.Println(Red("Error:"), Yellow("File .env does not exist"))
 			fmt.Println(Green("Fix:"), Yellow("use `./cloudrider cred -h` command"))
-			//fmt.Println(Red("Trace:"), Yellow(err))
 			os.Exit(1)
 			return false
 		}
@@ -135,6 +138,10 @@ func CheckFileExistance(path string) bool {
 }
 
 func LoadEnv() {
+	// Skip loading .env when AWS credentials are already in the environment.
+	if os.Getenv("AWS_ACCESS_KEY_ID") != "" {
+		return
+	}
 	err := godotenv.Load(".env")
 	if err != nil {
 		fmt.Println(Red("Error:"), Yellow("loading `.env` file"))
@@ -247,12 +254,15 @@ func AnalyseService(service string, print bool, filter string, errors_dump bool)
 	}
 }
 
-func CreateAWScredentialsFile(aws_region, aws_access_key_id, aws_secret_access_key, aws_session_token *string) {
+func CreateAWScredentialsFile(aws_region, aws_access_key_id, aws_secret_access_key, aws_session_token, aws_endpoint_url *string) {
 
 	awsCredentials := "AWS_REGION=" + *aws_region + "\n"
 	awsCredentials += "AWS_ACCESS_KEY_ID=" + *aws_access_key_id + "\n"
 	awsCredentials += "AWS_SECRET_ACCESS_KEY=" + *aws_secret_access_key + "\n"
 	awsCredentials += "AWS_SESSION_TOKEN=" + *aws_session_token + "\n"
+	if *aws_endpoint_url != "" {
+		awsCredentials += "AWS_ENDPOINT_URL=" + *aws_endpoint_url + "\n"
+	}
 
 	ioutil.WriteFile(".env", []byte(awsCredentials), 0644)
 }

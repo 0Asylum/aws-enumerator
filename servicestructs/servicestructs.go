@@ -1,10 +1,8 @@
 package servicestructs
 
 import (
-	"context"
 	"log"
 
-	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/acm"
 	"github.com/aws/aws-sdk-go-v2/service/amplify"
 	"github.com/aws/aws-sdk-go-v2/service/apigateway"
@@ -116,7 +114,7 @@ import (
 
 func GetServices() []servicemaster.ServiceMaster {
 
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+	cfg, err := servicemaster.LoadAWSConfig()
 
 	if err != nil {
 		log.Fatalln(utils.Red("Error:"), utils.Yellow("Unable to load SDK config,"))

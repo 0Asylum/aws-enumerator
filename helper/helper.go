@@ -63,15 +63,20 @@ Flags:
 
 var Cloudrider_cred_help string = `Usage:
 aws-enumerator cred [command]
-	  
+
 Flags:
   -aws_region               Specify AWS region to which the account may have access to.
   -aws_access_key_id        Specify AWS Access Key for wanted account.
   -aws_secret_access_key    Specify AWS Secret Access Key for wanted account.
   -aws_session_token        Specify AWS Session Token for wanted account.
+  -aws_endpoint_url         Specify a custom endpoint URL (e.g. http://aws.nimbus.htb for private/lab environments).
+
+Note: if AWS_ACCESS_KEY_ID (and optionally AWS_ENDPOINT_URL) are already exported as environment
+variables, the .env file is not required and those values will be used directly.
 
 Example:
-  ./aws-enumerator cred -aws_region us-west-2 -aws_access_key_id AKIA85CEHPO3GLIABKZD -aws_secret_access_key LW3bDF8xJvzGgArqMo0h4kuCYsnubU23kGICGp/p -aws_session_token LW3bDF8xJvzGgArqM.......
+  ./aws-enumerator cred -aws_region us-east-1 -aws_access_key_id AKIA85CEHPO3GLIABKZD -aws_secret_access_key LW3bDF8xJvzGgArqMo0h4kuCYsnubU23kGICGp/p -aws_session_token LW3bDF8xJvzGgArqM.......
+  ./aws-enumerator cred -aws_region us-east-1 -aws_access_key_id AKIA... -aws_secret_access_key ... -aws_endpoint_url http://aws.nimbus.htb
 `
 
 var Cloudrider_enum_help string = `Usage:
@@ -116,6 +121,7 @@ var AWS_region *string = Cred.String("aws_region", "", "")
 var AWS_access_key_id *string = Cred.String("aws_access_key_id", "", "")
 var AWS_secret_access_key *string = Cred.String("aws_secret_access_key", "", "")
 var AWS_session_token *string = Cred.String("aws_session_token", "", "")
+var AWS_endpoint_url *string = Cred.String("aws_endpoint_url", "", "")
 
 var Enum *flag.FlagSet = flag.NewFlagSet("enum", flag.ExitOnError)
 var Services_enum *string = Enum.String("services", "all", "")

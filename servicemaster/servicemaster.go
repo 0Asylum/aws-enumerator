@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/shabarkin/aws-enumerator/utils"
@@ -138,9 +139,26 @@ func (svc *ServiceMaster) save_result_to_file() {
 	ioutil.WriteFile(utils.ERROR_FILEPATH+svc.SvcName+"_errors.json", []byte(file_errors), 0644)
 }
 
+// LoadAWSConfig builds an AWS config, applying a custom endpoint URL if
+// AWS_ENDPOINT_URL is set in the environment (e.g. for LocalStack or HTB labs).
+func LoadAWSConfig() (aws.Config, error) {
+	endpointURL := os.Getenv("AWS_ENDPOINT_URL")
+	if endpointURL != "" {
+		customResolver := aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
+			return aws.Endpoint{
+				URL:               endpointURL,
+				SigningRegion:     region,
+				HostnameImmutable: true,
+			}, nil
+		})
+		return config.LoadDefaultConfig(context.TODO(), config.WithEndpointResolver(customResolver))
+	}
+	return config.LoadDefaultConfig(context.TODO())
+}
+
 func CheckAWSCredentials() bool {
 	if utils.CheckEnvFileExistance() {
-		cfg, err := config.LoadDefaultConfig(context.TODO())
+		cfg, err := LoadAWSConfig()
 		if err != nil {
 			fmt.Println(utils.Red("Error:"), utils.Yellow("Unable to load SDK config,"))
 			fmt.Println(utils.Green("Fix:"), utils.Yellow("The problem should be on our side, contact support please"))
