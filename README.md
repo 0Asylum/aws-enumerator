@@ -9,11 +9,14 @@ I hope, there will be no issues with the tool. If any issues encountered, please
 
 Adds support for custom endpoints via -aws_endpoint_url argument
 Will use environment variables if they exist:
-	export AWS_ACCESS_KEY_ID=<AccessKeyId>
-	export AWS_SECRET_ACCESS_KEY=<SecretAccessKey>
-	export AWS_SESSION_TOKEN=<Token>
-	export AWS_ENDPOINT_URL="http://custom_endpoint:4566"
-	export AWS_DEFAULT_REGION="us-east-1"
+
+```bash
+export AWS_ACCESS_KEY_ID=<AccessKeyId>
+export AWS_SECRET_ACCESS_KEY=<SecretAccessKey>
+export AWS_SESSION_TOKEN=<Token>
+export AWS_ENDPOINT_URL="http://custom_endpoint:4566"
+export AWS_DEFAULT_REGION="us-east-1"
+```
 
 # Description
 
